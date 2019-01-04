@@ -235,9 +235,10 @@ public class UI extends JFrame{
 		});
 		
 		//为发送按钮创建鼠标监听器
-		ipSearButt.addActionListener(new ActionListener() {
+		sentButt.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//发送按钮按下后的操作
+				roomSentButtBack();
 			}
 		});
 		
@@ -792,6 +793,37 @@ public class UI extends JFrame{
 			}
 		}
 	}
+	
+	//房间页面发送按钮后台
+		void roomSentButtBack() {
+			//发送D开头的消息
+			String $sentMessage = inputArea.getText();
+			String sentMessage = member[0].memberName+":\n"+$sentMessage+"\n";
+			String D = "D"+sentMessage;
+			DatagramPacket returnDp = null;
+			DatagramSocket returnDs;
+			try {
+				returnDs = new DatagramSocket();
+				for(int j=1; j<100; j++)
+				{
+					if(member[j].flag == 1)
+					{
+						returnDp = new DatagramPacket(D.getBytes(), 
+								D.getBytes().length, member[j].memberIp, 
+								member[j].port);
+						returnDs.send(returnDp);
+					}
+				}
+				returnDs.close();
+				chatContent.append(sentMessage);
+				chatContent.setCaretPosition(chatContent.getText().length());
+				inputArea.setText("");
+			} 
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
 	
 	//为房间退出按钮添加后台方法
 	void roomQuitButtBack()
